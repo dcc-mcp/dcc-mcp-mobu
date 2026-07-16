@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.2.0...v0.3.0) (2026-07-16)
+
+
+### Features
+
+* default adapter instances to dynamic ports ([#2](https://github.com/dcc-mcp/dcc-mcp-mobu/issues/2)) ([ef46801](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/ef468017f321cae94252d92a0518a73a97d49084))
+
 ## [0.2.0](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.1.0...v0.2.0) (2026-07-13)
 
 
