@@ -12,7 +12,9 @@ pip install dcc-mcp-mobu
 
 Copy the installed `dcc_mcp_mobu/mobu_plugin/startup/dcc_mcp_mobu.py` into a MotionBuilder Python Startup directory, or add that directory to the application's Python Startup paths. Restart MotionBuilder to start the adapter.
 
-By default the MCP server listens on port `8765`. Set `DCC_MCP_MOBU_PORT` to override it.
+Each adapter instance uses an OS-assigned port and registers it for CLI discovery. Connect
+through the stable gateway at `http://127.0.0.1:9765/mcp`; set `DCC_MCP_MOBU_PORT` only
+when a fixed direct endpoint is required.
 
 ## Tools
 

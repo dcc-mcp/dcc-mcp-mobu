@@ -20,7 +20,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
 ]
-dependencies = ["dcc-mcp-core>=0.19.13"]
+dependencies = ["dcc-mcp-core>=0.19.45,<1.0.0"]
 
 [project.urls]
 Homepage = "https://github.com/dcc-mcp/dcc-mcp-mobu"

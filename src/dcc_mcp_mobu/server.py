@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Optional
 
@@ -12,7 +11,7 @@ from dcc_mcp_core.server_base import DccServerBase
 from .__version__ import __version__
 from .dispatcher import MobuDispatcher
 
-DEFAULT_PORT = 8765
+DEFAULT_PORT = 0
 SERVER_NAME = "dcc-mcp-mobu"
 _dispatcher = MobuDispatcher()
 _server: Optional["MobuMcpServer"] = None
@@ -21,7 +20,7 @@ _server: Optional["MobuMcpServer"] = None
 class MobuMcpServer(DccServerBase):
     """DCC MCP server configured for a running MotionBuilder process."""
 
-    def __init__(self, port: int = DEFAULT_PORT) -> None:
+    def __init__(self, port: Optional[int] = None) -> None:
         options = DccServerOptions.from_env(
             "mobu",
             Path(__file__).resolve().parent / "skills",
@@ -50,8 +49,7 @@ def start_server(port: Optional[int] = None) -> MobuMcpServer:
         return _server
 
     _dispatcher.install()
-    resolved_port = port or int(os.environ.get("DCC_MCP_MOBU_PORT", DEFAULT_PORT))
-    _server = MobuMcpServer(resolved_port)
+    _server = MobuMcpServer(port)
     _server.register_builtin_actions()
     _server.start()
     return _server
