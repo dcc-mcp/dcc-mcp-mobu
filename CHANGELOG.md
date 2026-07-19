@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.3.0...v0.3.1) (2026-07-19)
+
+
+### Documentation
+
+* align agent workflow and branding ([d4c5fa0](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/d4c5fa0dd7826b23dbebd86dbb5f8cbc5d80ce34))
+* document CLI install and updates ([92ec97c](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/92ec97c41c29bb83c6bb046000e71d86ad04b3e6))
+
 ## [0.3.0](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.2.0...v0.3.0) (2026-07-16)
 
 
