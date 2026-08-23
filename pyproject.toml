@@ -30,9 +30,27 @@ Issues = "https://github.com/dcc-mcp/dcc-mcp-mobu/issues"
 [project.optional-dependencies]
 dev = ["build>=1.2", "pytest>=8", "ruff>=0.8", "twine>=6"]
 
+[project.scripts]
+dcc-mcp-mobu = "dcc_mcp_mobu.install_cli:main"
+
+[project.entry-points."dcc_mcp.adapters"]
+mobu = "dcc_mcp_mobu:MobuMcpServer"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/dcc_mcp_mobu"]
 artifacts = ["src/dcc_mcp_mobu/skills/**", "src/dcc_mcp_mobu/mobu_plugin/**"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/dcc_mcp_mobu",
+  "tests",
+  "tools",
+  "README.md",
+  "install.md",
+  "CHANGELOG.md",
+  "LICENSE",
+  "pyproject.toml",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
