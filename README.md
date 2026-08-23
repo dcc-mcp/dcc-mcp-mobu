@@ -53,11 +53,10 @@ It exposes a small, typed scene-management surface and runs MotionBuilder API ca
 
 ## Install
 
-```bash
-pip install dcc-mcp-mobu
-```
-
-Copy the installed `dcc_mcp_mobu/mobu_plugin/startup/dcc_mcp_mobu.py` into a MotionBuilder Python Startup directory, or add that directory to the application's Python Startup paths. Restart MotionBuilder to start the adapter.
+Follow the [agent-first installation and lifecycle guide](install.md). It uses
+MotionBuilder's exact `mobupy`, stages a receipted Startup hook, verifies a
+typed host ping, and provides standard install/status/verify/uninstall/upgrade
+commands. A system-pip install is not a MotionBuilder installation.
 
 Each adapter instance uses an OS-assigned port and registers it for CLI discovery. Connect
 through the stable gateway at `http://127.0.0.1:9765/mcp`; set `DCC_MCP_MOBU_PORT` only
