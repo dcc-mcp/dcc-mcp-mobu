@@ -1,3 +1,4 @@
+import json
 import re
 import runpy
 import sys
@@ -21,10 +22,33 @@ def test_install_guide_tracks_release_version() -> None:
     release_version = version_match.group(1)
     guide = root / "install.md"
     content = guide.read_text(encoding="utf-8")
-    major, minor, _patch = release_version.split(".")
 
     assert set(re.findall(r"dcc-mcp-mobu==(\d+\.\d+\.\d+)", content)) == {release_version}
-    assert f"| {major}.{minor}.x |" in content
+    assert f"| {release_version} |" in content
+
+
+def test_release_please_updates_both_install_guide_version_surfaces() -> None:
+    root = Path(__file__).parents[1]
+    config = json.loads((root / "release-please-config.json").read_text(encoding="utf-8"))
+    extra_files = config["packages"]["."]["extra-files"]
+    assert {"type": "generic", "path": "install.md"} in extra_files
+
+    content = (root / "install.md").read_text(encoding="utf-8")
+    next_version = "12.34.56"
+    updated_lines = []
+    updated_count = 0
+    for line in content.splitlines():
+        if "x-release-please-version" in line:
+            line, count = re.subn(r"\d+\.\d+\.\d+", next_version, line, count=1)
+            updated_count += count
+        updated_lines.append(line)
+    rendered = re.sub(
+        r"[ \t]*<!-- x-release-please-version -->[ \t]*", "", "\n".join(updated_lines)
+    )
+
+    assert updated_count == 2
+    assert f"dcc-mcp-mobu=={next_version}" in rendered
+    assert f"| {next_version} |" in rendered
 
 
 def test_startup_script_is_packaged_with_source() -> None:

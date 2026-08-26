@@ -20,9 +20,7 @@ of [DCC-MCP Adapter Install SOP v1](https://dcc-mcp.github.io/dcc-mcp-core/guide
 
 Install the wheel with the exact interpreter selected for this MotionBuilder:
 
-```text
-<absolute-mobupy> -m pip install "dcc-mcp-mobu==0.4.0"
-```
+`<absolute-mobupy> -m pip install "dcc-mcp-mobu==0.4.0"` <!-- x-release-please-version -->
 
 The installer verifies that this interpreter imports the exact adapter version
 and a compatible Core before writing a Startup hook.
@@ -31,7 +29,7 @@ and a compatible Core before writing a Startup hook.
 
 | Adapter | dcc-mcp-core | MotionBuilder | Embedded Python | Platforms |
 | --- | --- | --- | --- | --- |
-| 0.4.x | >=0.19.45,<1.0.0 | 2023+ | 3.9+ | Windows, Linux |
+| 0.4.0 | >=0.19.45,<1.0.0 | 2023+ | 3.9+ | Windows, Linux | <!-- x-release-please-version -->
 
 Official default installation layouts are:
 
