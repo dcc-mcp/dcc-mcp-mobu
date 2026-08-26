@@ -1,3 +1,4 @@
+import re
 import runpy
 import sys
 from contextlib import contextmanager
@@ -10,6 +11,20 @@ from dcc_mcp_mobu import __version__
 def test_package_version_matches_project_metadata() -> None:
     project = Path(__file__).parents[1] / "pyproject.toml"
     assert f'version = "{__version__}"' in project.read_text(encoding="utf-8")
+
+
+def test_install_guide_tracks_release_version() -> None:
+    root = Path(__file__).parents[1]
+    project = (root / "pyproject.toml").read_text(encoding="utf-8")
+    version_match = re.search(r'^version = "(\d+\.\d+\.\d+)"$', project, re.MULTILINE)
+    assert version_match is not None
+    release_version = version_match.group(1)
+    guide = root / "install.md"
+    content = guide.read_text(encoding="utf-8")
+    major, minor, _patch = release_version.split(".")
+
+    assert set(re.findall(r"dcc-mcp-mobu==(\d+\.\d+\.\d+)", content)) == {release_version}
+    assert f"| {major}.{minor}.x |" in content
 
 
 def test_startup_script_is_packaged_with_source() -> None:
