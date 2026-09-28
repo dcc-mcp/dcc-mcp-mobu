@@ -81,7 +81,7 @@ is not a MotionBuilder installation.**
   release-please skips the whole batch — no release pull request, **no version bump**
   (`strategies/base.ts` logs “No user facing commits found since … - skipping” when
   `changelogEmpty()` finds only the heading line).
-- For `release-type: python`: `chore:`/`ci:`/`style`/`refactor:`/`test:`/`build:` are
+- For `release-type: python`: `chore:`/`ci:`/`style:`/`refactor:`/`test:`/`build:` are
   `hidden: true`; `docs:` is a **visible** `Documentation` section.
 - Only once a release *is* cut does the prefix choose the bump: breaking → major,
   `feat:` → minor, anything else → patch
@@ -91,8 +91,6 @@ is not a MotionBuilder installation.**
 - The version is mirrored into `pyproject.toml`,
   `src/dcc_mcp_mobu/__version__.py`, and `install.md`; do not edit those by
   hand.
-- Use `chore:` for config and doc work: a `chore:`-only batch produces an empty changelog
-  entry, so release-please skips it and the version stays put.
 
 ## Do / Don't
 
