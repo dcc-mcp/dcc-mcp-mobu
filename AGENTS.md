@@ -76,12 +76,18 @@ is not a MotionBuilder installation.**
 ## Release
 
 - release-please drives versioning from Conventional Commits on `main`.
-- `feat:` → minor, `fix:` → patch, `chore:`/`docs:`/`ci:` → **no release**.
+- `feat:` → minor, `fix:` → patch. Every other prefix still lands on **patch**:
+  `DefaultVersioningStrategy.determineReleaseType()` falls back to
+  `PatchVersionUpdate` when the batch has no `feat:` and no breaking change, so
+  `chore:`/`docs:`/`ci:` are **not** “no release”.
+- What those prefixes change is the changelog: `chore:`/`ci:`/`style`/`refactor`/
+  `test`/`build` are `hidden: true` sections, while `docs:` is a **visible**
+  `Documentation` section (`release-type: python`).
 - The version is mirrored into `pyproject.toml`,
   `src/dcc_mcp_mobu/__version__.py`, and `install.md`; do not edit those by
   hand.
-- Use `chore:`/`docs:` for config and doc work so release-please does not cut a
-  valueless version.
+- Use `chore:` for config and doc work: it still bumps the version, but keeps
+  the changelog free of valueless entries.
 
 ## Do / Don't
 
@@ -94,8 +100,8 @@ is not a MotionBuilder installation.**
   and that `install.md` ships in the sdist.
 - **Don't** add `CLAUDE.md` / `GEMINI.md` / `CURSOR.md` / `ANTHROPIC.md` /
   `OPENAI.md` / `COPILOT.md` / `CODEBUDDY.md` / `.cursorrules` / `.clinerules` /
-  `.windsurfrules` at the root. Vendor-specific notes live under
-  `docs/integrations/`, linked from here.
+  `.windsurfrules` at the root. This repo has no `docs/integrations/`; keep any
+  vendor-specific notes here.
 - **Don't** hardcode an exact version in tests (`assert __version__ == "X.Y.Z"`)
   — release-please bumps will break it. Use `>=` or read package metadata.
 - **Don't** commit build artifacts to the repo root (`dist/`, `build/`,
