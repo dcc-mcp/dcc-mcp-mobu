@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.4.0...v0.4.1) (2026-10-09)
+
+
+### Documentation
+
+* **readme:** add the generated DCC-MCP host matrix pointer ([168ddbb](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/168ddbb3a079c68f1719bda253a12d649b15ce55))
+* regenerate host matrix pointer block from the current catalog ([6054c29](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/6054c293cd000adbd2b094367bfdb9675cfec2e1))
+
 ## [0.4.0](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.3.0...v0.4.0) (2026-08-25)
 
 
