@@ -44,21 +44,36 @@ class MobuMcpServer(DccServerBase):
 
 def start_server(port: Optional[int] = None) -> MobuMcpServer:
     """Start the singleton MCP server from MotionBuilder startup code."""
-    global _server
+    global _server, _dispatcher
     if _server is not None:
         return _server
 
     _dispatcher.install()
-    _server = MobuMcpServer(port)
-    _server.register_builtin_actions()
-    _server.start()
+    server = None
+    try:
+        server = MobuMcpServer(port)
+        server.register_builtin_actions()
+        server.start()
+    except Exception:
+        try:
+            if server is not None:
+                server.stop()
+        finally:
+            _dispatcher.uninstall()
+            _dispatcher = MobuDispatcher()
+        raise
+    _server = server
     return _server
 
 
 def stop_server() -> None:
     """Stop the adapter and unregister its UI-idle callback."""
-    global _server
-    if _server is not None:
-        _server.stop()
+    global _server, _dispatcher
+    try:
+        if _server is not None:
+            _server.stop()
+    finally:
         _server = None
-    _dispatcher.uninstall()
+        _dispatcher.uninstall()
+        # Core shutdown is terminal: the next start owns a fresh queue and binding.
+        _dispatcher = MobuDispatcher()

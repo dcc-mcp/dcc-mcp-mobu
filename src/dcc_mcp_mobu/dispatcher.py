@@ -2,27 +2,19 @@
 
 from __future__ import annotations
 
-from collections import deque
-from dataclasses import dataclass
-from threading import Event, Lock, current_thread, main_thread
-from typing import Any, Callable, Deque, Optional
+from functools import partial
+from threading import current_thread, main_thread
+from typing import Any, Callable, Optional
+from uuid import uuid4
+
+from dcc_mcp_core import HostUiDispatcherBase
 
 
-@dataclass
-class _PendingCall:
-    callback: Callable[..., Any]
-    args: tuple[Any, ...]
-    kwargs: dict[str, Any]
-    completed: Event
-    result: dict[str, Any]
-
-
-class MobuDispatcher:
-    """Dispatch bridge that drains queued calls from ``FBSystem.OnUIIdle``."""
+class MobuDispatcher(HostUiDispatcherBase):
+    """Pump shared Python and native HTTP queues from ``FBSystem.OnUIIdle``."""
 
     def __init__(self) -> None:
-        self._calls: Deque[_PendingCall] = deque()
-        self._lock = Lock()
+        super().__init__(label="MotionBuilder UI")
         self._system: Optional[Any] = None
         self._installed = False
 
@@ -30,12 +22,16 @@ class MobuDispatcher:
         """Register the UI-idle callback once MotionBuilder is available."""
         if self._installed:
             return
+        if current_thread() is not main_thread():
+            raise RuntimeError("Install the MotionBuilder UI dispatcher on the host main thread")
 
         from pyfbsdk import FBSystem
 
         self._system = FBSystem()
         self._system.OnUIIdle.Add(self._drain)
         self._installed = True
+        # Establish host identity without executing work during startup.
+        self.drain_queue(budget_ms=0)
 
     def uninstall(self) -> None:
         """Remove the UI-idle callback during adapter shutdown."""
@@ -45,48 +41,39 @@ class MobuDispatcher:
         self._system.OnUIIdle.Remove(self._drain)
         self._system = None
         self._installed = False
+        self.shutdown()
 
-    def dispatch_callable(self, callback: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    def poke_host_pump(self) -> None:
+        """Let the registered idle event drain work without cross-thread SDK calls."""
+
+    def dispatch_callable(
+        self,
+        callback: Callable[..., Any],
+        *args: Any,
+        affinity: str = "main",
+        context: Any = None,
+        action_name: str = "",
+        skill_name: Optional[str] = None,
+        execution: Optional[str] = None,
+        timeout_hint_secs: Optional[int] = None,
+        thread_affinity: Optional[str] = None,
+        **kwargs: Any,
+    ) -> Any:
         """Run a callable on the MotionBuilder UI thread and return its result."""
-        for key in (
-            "context",
-            "action_name",
-            "skill_name",
-            "execution",
-            "timeout_hint_secs",
-            "affinity",
-            "thread_affinity",
-        ):
-            kwargs.pop(key, None)
-
-        if current_thread() is main_thread():
-            return callback(*args, **kwargs)
         if not self._installed:
             raise RuntimeError("MotionBuilder UI dispatcher is not installed")
-
-        completed = Event()
-        result: dict[str, Any] = {}
-        pending = _PendingCall(callback, args, kwargs, completed, result)
-        with self._lock:
-            self._calls.append(pending)
-
-        if not completed.wait(timeout=30):
-            raise RuntimeError("Timed out waiting for MotionBuilder UI thread execution")
-        if "error" in result:
-            raise result["error"]
-        return result["value"]
+        if self.is_host_thread():
+            return callback(*args, **kwargs)
+        outcome = self.submit_callable(
+            str(uuid4()),
+            partial(callback, *args, **kwargs),
+            affinity=thread_affinity or affinity,
+            timeout_ms=int(timeout_hint_secs * 1000) if timeout_hint_secs else None,
+        )
+        if not outcome["success"]:
+            raise RuntimeError(outcome["error"])
+        return outcome["output"]
 
     def _drain(self, *_: Any) -> None:
-        """Execute queued work while MotionBuilder is idle."""
-        while True:
-            with self._lock:
-                if not self._calls:
-                    return
-                pending = self._calls.popleft()
-
-            try:
-                pending.result["value"] = pending.callback(*pending.args, **pending.kwargs)
-            except Exception as error:
-                pending.result["error"] = error
-            finally:
-                pending.completed.set()
+        """Drain both queues within the shared soft per-idle budget."""
+        self.drain_queue(budget_ms=8)

@@ -6,6 +6,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from types import ModuleType
 
+import pytest
+
 from dcc_mcp_mobu import __version__
 
 
@@ -163,10 +165,12 @@ def test_start_server_defers_port_resolution_to_core(monkeypatch) -> None:
     )
 
     monkeypatch.setattr(server_module, "_server", None)
+    dispatcher = SimpleNamespace(install=lambda: None, uninstall=lambda: None)
+    monkeypatch.setattr(server_module, "MobuDispatcher", lambda: dispatcher)
     monkeypatch.setattr(
         server_module,
         "_dispatcher",
-        SimpleNamespace(install=lambda: None, uninstall=lambda: None),
+        dispatcher,
     )
     monkeypatch.setattr(
         server_module, "MobuMcpServer", lambda port=None: ports.append(port) or stub
@@ -179,3 +183,43 @@ def test_start_server_defers_port_resolution_to_core(monkeypatch) -> None:
     server_module.stop_server()
 
     assert ports == [0, None]
+
+
+@pytest.mark.parametrize("failure_stage", ["construct", "register", "start"])
+def test_failed_start_does_not_cache_server_or_reuse_shutdown_dispatcher(
+    monkeypatch, failure_stage
+):
+    from types import SimpleNamespace
+
+    from dcc_mcp_mobu import server as server_module
+
+    events = []
+    old = SimpleNamespace(
+        install=lambda: events.append("install"),
+        uninstall=lambda: events.append("uninstall"),
+    )
+    fresh = object()
+
+    def stage(name):
+        events.append(name)
+        if failure_stage == name:
+            raise RuntimeError("startup failure")
+
+    def construct(port):
+        stage("construct")
+        return SimpleNamespace(
+            register_builtin_actions=lambda: stage("register"),
+            start=lambda: stage("start"),
+            stop=lambda: stage("stop"),
+        )
+
+    monkeypatch.setattr(server_module, "_server", None)
+    monkeypatch.setattr(server_module, "_dispatcher", old)
+    monkeypatch.setattr(server_module, "MobuMcpServer", construct)
+    monkeypatch.setattr(server_module, "MobuDispatcher", lambda: fresh)
+    with pytest.raises(RuntimeError, match="startup failure"):
+        server_module.start_server()
+    assert server_module._server is None
+    assert server_module._dispatcher is fresh
+    assert events[-1] == "uninstall"
+    assert ("stop" in events) == (failure_stage != "construct")
