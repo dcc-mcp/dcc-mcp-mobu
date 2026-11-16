@@ -185,6 +185,70 @@ def test_start_server_defers_port_resolution_to_core(monkeypatch) -> None:
     assert ports == [0, None]
 
 
+@pytest.mark.parametrize("stop_raises", [False, True])
+def test_stop_replaces_dispatcher_before_restart(monkeypatch, stop_raises) -> None:
+    from types import SimpleNamespace
+
+    from dcc_mcp_mobu import server as server_module
+
+    events = []
+    bindings = []
+
+    def dispatcher(name):
+        return SimpleNamespace(
+            install=lambda: events.append((name, "install")),
+            uninstall=lambda: events.append((name, "uninstall")),
+        )
+
+    original = dispatcher("original")
+    replacement = dispatcher("replacement")
+    next_dispatcher = dispatcher("next")
+    replacements = iter([replacement, next_dispatcher])
+
+    def construct(port):
+        binding = server_module._dispatcher
+        bindings.append(binding)
+
+        def stop():
+            events.append(("server", "stop"))
+            if stop_raises and binding is original:
+                raise RuntimeError("shutdown failure")
+
+        return SimpleNamespace(
+            register_builtin_actions=lambda: None,
+            start=lambda: None,
+            stop=stop,
+        )
+
+    monkeypatch.setattr(server_module, "_server", None)
+    monkeypatch.setattr(server_module, "_dispatcher", original)
+    monkeypatch.setattr(server_module, "MobuDispatcher", lambda: next(replacements))
+    monkeypatch.setattr(server_module, "MobuMcpServer", construct)
+
+    server_module.start_server()
+    if stop_raises:
+        with pytest.raises(RuntimeError, match="shutdown failure"):
+            server_module.stop_server()
+    else:
+        server_module.stop_server()
+
+    assert server_module._server is None
+    assert server_module._dispatcher is replacement
+    assert events == [("original", "install"), ("server", "stop"), ("original", "uninstall")]
+
+    server_module.start_server()
+    server_module.stop_server()
+
+    assert bindings == [original, replacement]
+    assert server_module._server is None
+    assert server_module._dispatcher is next_dispatcher
+    assert events[-3:] == [
+        ("replacement", "install"),
+        ("server", "stop"),
+        ("replacement", "uninstall"),
+    ]
+
+
 @pytest.mark.parametrize("failure_stage", ["construct", "register", "start"])
 def test_failed_start_does_not_cache_server_or_reuse_shutdown_dispatcher(
     monkeypatch, failure_stage
