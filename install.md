@@ -189,6 +189,22 @@ is never deleted. Repeating uninstall after success is safe.
 
 ## Troubleshooting
 
+Scene and typed ping tools require the shared Core host dispatcher, including
+its native HTTP queue. `MobuDispatcher` pumps both queues from `OnUIIdle` with
+an 8 ms soft budget; it never calls the MotionBuilder SDK from a worker to wake
+the UI. Readiness alone is insufficient: after loading this adapter version,
+call `mobu_scene__inspect_scene` and `mobu_scene__list_models` through MCP
+`tools/call` and confirm neither reports `THREAD_AFFINITY_VIOLATION` or
+`worker_no_dispatcher`. A host-native operation already running can exceed the
+soft budget; it cannot be forcibly interrupted safely.
+
+For embedded Python DLL loading failures, see Core issues
+[#2884](https://github.com/dcc-mcp/dcc-mcp-core/issues/2884) and
+[#2885](https://github.com/dcc-mcp/dcc-mcp-core/issues/2885). Their explicit
+native preflight is a separate pending Core change, not an API supplied by this
+adapter update. Do not mistake an import-only installation check for a usable
+MotionBuilder session.
+
 | Result | Diagnosis | Action |
 | --- | --- | --- |
 | Exit 10, `dcc_path_not_found` or ambiguity | Host path is absent or not unique | Pass the exact executable with `--dcc-path`. |
