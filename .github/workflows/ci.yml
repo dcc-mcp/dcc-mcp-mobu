@@ -16,11 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.9", "3.11", "3.12"]
-        exclude:
-          - os: windows-latest
-            python-version: "3.9"
-          - os: macos-latest
+        python-version: ["3.11", "3.12"]
+        include:
+          # Ubuntu 26.04 has no setup-python build for the supported legacy lane.
+          - os: ubuntu-24.04
             python-version: "3.9"
     steps:
       - uses: actions/checkout@v4
