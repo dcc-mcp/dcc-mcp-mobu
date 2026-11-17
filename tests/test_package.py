@@ -1,4 +1,5 @@
 import json
+import platform
 import re
 import runpy
 import sys
@@ -135,7 +136,6 @@ def test_diagnostics_ping_reports_motionbuilder_and_embedded_python_lazily(monke
 
     class FakeSystem:
         Version = "2026.1"
-        PythonVersionString = "3.11.9"
 
     pyfbsdk.FBSystem = FakeSystem
     monkeypatch.setitem(sys.modules, "pyfbsdk", pyfbsdk)
@@ -147,7 +147,7 @@ def test_diagnostics_ping_reports_motionbuilder_and_embedded_python_lazily(monke
     assert result["context"] == {
         "ready": True,
         "application_version": "2026.1",
-        "python_version": "3.11.9",
+        "python_version": platform.python_version(),
     }
 
 

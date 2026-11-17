@@ -6,7 +6,7 @@ from dcc_mcp_core.skill import skill_entry, skill_success
 @skill_entry
 def main() -> dict:
     """Return concise scene metadata."""
-    from pyfbsdk import FBSystem
+    from pyfbsdk import FBModel, FBSystem
 
     system = FBSystem()
     scene = system.Scene
@@ -16,7 +16,7 @@ def main() -> dict:
         application_version=str(system.Version),
         current_take=current_take.Name if current_take else None,
         component_count=len(scene.Components),
-        model_count=len(scene.Models),
+        model_count=sum(isinstance(component, FBModel) for component in scene.Components),
     )
 
 

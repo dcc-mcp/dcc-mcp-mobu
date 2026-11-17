@@ -21,3 +21,6 @@ metadata:
 
 Use `ping` to prove that a live MotionBuilder process can execute a typed,
 read-only call through the adapter's main-thread dispatcher.
+
+The Python version comes from the running interpreter, so the probe also works
+with hosts that do not expose `FBSystem.PythonVersionString`.

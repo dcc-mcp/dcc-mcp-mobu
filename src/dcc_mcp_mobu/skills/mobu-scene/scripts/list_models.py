@@ -6,9 +6,13 @@ from dcc_mcp_core.skill import skill_entry, skill_success
 @skill_entry
 def main() -> dict:
     """Return model names without exposing a raw scripting surface."""
-    from pyfbsdk import FBSystem
+    from pyfbsdk import FBModel, FBSystem
 
-    models = [{"name": model.Name} for model in FBSystem().Scene.Models]
+    models = [
+        {"name": component.Name}
+        for component in FBSystem().Scene.Components
+        if isinstance(component, FBModel)
+    ]
     return skill_success("MotionBuilder models listed.", models=models, model_count=len(models))
 
 
