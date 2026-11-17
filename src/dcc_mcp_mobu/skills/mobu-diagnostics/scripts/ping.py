@@ -1,5 +1,7 @@
 """Typed MotionBuilder readiness probe."""
 
+import platform
+
 from dcc_mcp_core.skill import skill_entry, skill_success
 
 
@@ -13,7 +15,7 @@ def main() -> dict:
         "MotionBuilder host API is ready.",
         ready=True,
         application_version=str(system.Version),
-        python_version=str(system.PythonVersionString),
+        python_version=platform.python_version(),
     )
 
 

@@ -21,4 +21,7 @@ metadata:
 
 Use these tools to inspect the currently open MotionBuilder scene, list its models, and save it to an explicit `.fbx` path.
 
+Model counts and names include scene components that are `FBModel` instances,
+including cameras and lights; non-model components are excluded.
+
 `save_scene` changes files on disk. Confirm the intended target path before calling it.
