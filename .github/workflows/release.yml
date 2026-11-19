@@ -21,6 +21,7 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
   publish:
     needs: release-please
