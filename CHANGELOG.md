@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.2](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.4.1...v0.4.2) (2026-11-19)
+
+
+### Bug Fixes
+
+* use organization token for release automation ([6c3f64b](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/6c3f64b376cde88d7516cce840f28a8ba4518f56))
+* use organization token for release automation ([267a291](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/267a29177a2766e0b4ad2ac787c668360a78efc9))
+
 ## [0.4.1](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.4.0...v0.4.1) (2026-11-18)
 
 
