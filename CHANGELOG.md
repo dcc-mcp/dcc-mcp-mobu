@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.4.0...v0.4.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* **dispatcher:** attach MotionBuilder idle pump to native HTTP routing ([1b0291d](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/1b0291d5d49b67e5b6eb8e898e3e6469dede35ac))
+* support MotionBuilder 2024 diagnostic and scene APIs ([4f61407](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/4f6140798f6ad143db1538a92e1f55756fbe04e3))
+
+
+### Documentation
+
+* **readme:** add the generated DCC-MCP host matrix pointer ([168ddbb](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/168ddbb3a079c68f1719bda253a12d649b15ce55))
+* refresh the generated DCC-MCP host matrix pointer ([90c912a](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/90c912aed5da36fbb711754ed0fa689f42c0a27f))
+* regenerate host matrix pointer block from the current catalog ([6054c29](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/6054c293cd000adbd2b094367bfdb9675cfec2e1))
+
 ## [0.4.0](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.3.0...v0.4.0) (2026-08-25)
 
 
