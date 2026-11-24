@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      publish_tag:
+        description: Existing release tag to rebuild and publish
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -15,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - id: release
         uses: googleapis/release-please-action@v4
@@ -25,18 +31,24 @@ jobs:
 
   publish:
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    if: ${{ needs.release-please.outputs.release_created == 'true' || inputs.publish_tag != '' }}
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
       id-token: write
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.publish_tag || needs.release-please.outputs.tag_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Build distribution
         run: python -m pip install build && python -m build
+      - name: Upload distribution to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ inputs.publish_tag || needs.release-please.outputs.tag_name }}" dist/*.whl dist/*.tar.gz --clobber
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
