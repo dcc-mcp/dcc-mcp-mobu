@@ -28,7 +28,7 @@ Repository = "https://github.com/dcc-mcp/dcc-mcp-mobu"
 Issues = "https://github.com/dcc-mcp/dcc-mcp-mobu/issues"
 
 [project.optional-dependencies]
-dev = ["build>=1.2", "pytest>=8", "ruff>=0.8", "twine>=6"]
+dev = ["build>=1.2", "pytest>=8", "pyyaml>=6.0,<7", "ruff>=0.8", "twine>=6"]
 
 [project.scripts]
 dcc-mcp-mobu = "dcc_mcp_mobu.install_cli:main"
