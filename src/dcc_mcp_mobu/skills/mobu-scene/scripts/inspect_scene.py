@@ -11,12 +11,21 @@ def main() -> dict:
     system = FBSystem()
     scene = system.Scene
     current_take = system.CurrentTake
+    characters = [
+        getattr(character, "LongName", getattr(character, "Name", ""))
+        for character in getattr(scene, "Characters", ())
+    ]
+    takes = [getattr(take, "Name", "") for take in getattr(scene, "Takes", ())]
     return skill_success(
         "MotionBuilder scene inspected.",
         application_version=str(system.Version),
         current_take=current_take.Name if current_take else None,
         component_count=len(scene.Components),
         model_count=sum(isinstance(component, FBModel) for component in scene.Components),
+        character_count=len(characters),
+        characters=characters,
+        take_count=len(takes),
+        takes=takes,
     )
 
 

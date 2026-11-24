@@ -1,0 +1,133 @@
+tools:
+  - name: inspect_state
+    description: Return the current MotionBuilder file and scene state.
+    input_schema: {type: object, properties: {}}
+    read_only: true
+    destructive: false
+    idempotent: true
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 30
+    source_file: scripts/inspect_state.py
+
+  - name: open
+    description: Open an existing absolute scene file and replace the current scene.
+    input_schema:
+      type: object
+      required: [path, file_type]
+      properties:
+        path:
+          type: string
+          description: Absolute existing scene file path.
+        file_type:
+          type: string
+          enum: [scene]
+          description: MotionBuilder scene interchange type.
+    read_only: false
+    destructive: true
+    idempotent: false
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 120
+    source_file: scripts/open.py
+    readback: inspect_state
+
+  - name: merge
+    description: Merge an existing absolute scene file into the current scene.
+    input_schema:
+      type: object
+      required: [path, file_type]
+      properties:
+        path:
+          type: string
+          description: Absolute existing scene file path.
+        file_type:
+          type: string
+          enum: [scene]
+          description: MotionBuilder scene interchange type.
+    read_only: false
+    destructive: true
+    idempotent: false
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 120
+    source_file: scripts/merge.py
+    readback: inspect_state
+
+  - name: append
+    description: Append an existing absolute scene file to the current scene.
+    input_schema:
+      type: object
+      required: [path, file_type]
+      properties:
+        path:
+          type: string
+          description: Absolute existing scene file path.
+        file_type:
+          type: string
+          enum: [scene]
+          description: MotionBuilder scene interchange type.
+    read_only: false
+    destructive: true
+    idempotent: false
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 120
+    source_file: scripts/append.py
+    readback: inspect_state
+
+  - name: import
+    description: Import an existing absolute FBX motion file into the current take.
+    input_schema:
+      type: object
+      required: [path, file_type]
+      properties:
+        path:
+          type: string
+          description: Absolute existing FBX motion file path.
+        file_type:
+          type: string
+          enum: [fbx]
+          description: Direct Motion File API type supported by this tool.
+        match_models:
+          type: boolean
+          default: false
+          description: Replace animation on scene models with matching names.
+        create_unmatched_models:
+          type: boolean
+          default: true
+          description: Create unmatched models when match_models is true.
+    read_only: false
+    destructive: true
+    idempotent: false
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 120
+    source_file: scripts/import_motion.py
+    readback: inspect_state
+
+  - name: export
+    description: Export the current take to an absolute FBX motion file.
+    input_schema:
+      type: object
+      required: [path, file_type]
+      properties:
+        path:
+          type: string
+          description: Absolute destination FBX motion file path.
+        file_type:
+          type: string
+          enum: [fbx]
+          description: Direct Motion File API type supported by this tool.
+        overwrite:
+          type: boolean
+          default: false
+          description: Explicitly allow replacement of an existing output file.
+    read_only: false
+    destructive: true
+    idempotent: false
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 120
+    source_file: scripts/export_motion.py
+    readback: inspect_state

@@ -68,7 +68,9 @@ attach a stable session id with `--meta-json`, query `dcc-mcp-cli stats --range 
 
 An MCP adapter for Autodesk MotionBuilder, built on [dcc-mcp-core](https://github.com/dcc-mcp/dcc-mcp-core).
 
-It exposes a small, typed scene-management surface and runs MotionBuilder API calls on the application's UI thread.
+It exposes typed system, scene, animation, interchange, motion-capture, plug-in,
+and production-tracking diagnostics while running MotionBuilder API calls on the
+application's UI thread.
 
 ## Install
 
@@ -83,11 +85,42 @@ when a fixed direct endpoint is required.
 
 ## Tools
 
-- `mobu-scene.inspect_scene`
-- `mobu-scene.list_models`
-- `mobu-scene.save_scene`
+- Diagnostics
+  - `mobu-diagnostics.ping`
+- API projections
+  - `mobu-api.inspect_system`
+  - `mobu-api.list_components`
+  - `mobu-api.list_characters`
+- Scene
+  - `mobu-scene.inspect_scene`
+  - `mobu-scene.list_models`
+  - `mobu-scene.save_scene`
+- Animation
+  - `mobu-animation.list_takes`
+  - `mobu-animation.inspect_current_take`
+  - `mobu-animation.list_story`
+- Interchange
+  - `mobu-interchange.inspect_state`
+  - `mobu-interchange.open`
+  - `mobu-interchange.merge`
+  - `mobu-interchange.append`
+  - `mobu-interchange.import`
+  - `mobu-interchange.export`
+- Motion capture
+  - `mobu-mocap.list_devices`
+  - `mobu-mocap.list_actors`
+  - `mobu-mocap.list_marker_sets`
+- Plug-ins
+  - `mobu-plugins.list_loaded_plugins`
+  - `mobu-plugins.inspect_runtime`
+- Production tracking
+  - `mobu-production-tracking.inspect_mapping_context`
+  - `mobu-production-tracking.check_connection`
 
-`save_scene` is destructive and requires an explicit absolute `.fbx` path.
+The API, mocap, plug-in, and production-tracking tools are read-only.
+The production-tracking connection check reports `unavailable` when the
+optional `dcc-mcp-fpt` adapter is not registered. Interchange mutations return
+verified state readback. `save_scene` requires an explicit absolute `.fbx` path.
 
 ## Development
 

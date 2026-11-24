@@ -1,14 +1,15 @@
 # AGENTS.md — dcc-mcp-mobu
 
 > MCP adapter for Autodesk MotionBuilder, built on `dcc-mcp-core`. Exposes a
-> small typed scene-management surface and runs MotionBuilder API calls on the
-> application's UI thread.
+> typed MotionBuilder API surface and runs host calls on the application's UI
+> thread.
 > Navigation map for AI agents, not a reference manual. Follow the links; do not
 > read everything up front.
 
 ## Build & test
 
-There is no `justfile` or `vx.toml` in this repo — use the commands CI runs:
+Use the pinned `vx` and `just` toolchain for the repository check, then run the
+same commands CI executes:
 
 ```bash
 python -m pip install -e ".[dev]"   # editable install with dev extras
@@ -18,6 +19,9 @@ ruff format --check src tests tools # format check
 python tools/lint_skills.py         # validate SKILL.md / tools.yaml
 python -m build                     # build wheel + sdist
 ```
+
+`vx just@1.58 toolchain-ci` verifies the pinned toolchain without changing the
+Python package environment.
 
 ## Agent control path
 
@@ -51,6 +55,12 @@ set `DCC_MCP_MOBU_PORT` only when a fixed direct endpoint is required.
 |---|---|
 | `mobu-scene` | `inspect_scene`, `list_models`, `save_scene` |
 | `mobu-diagnostics` | `ping` (typed host ping used by install verification) |
+| `mobu-api` | `inspect_system`, `list_components`, `list_characters` |
+| `mobu-animation` | `list_takes`, `inspect_current_take`, `list_story` |
+| `mobu-interchange` | `inspect_state`, `open`, `merge`, `append`, `import`, `export` |
+| `mobu-mocap` | `list_devices`, `list_actors`, `list_marker_sets` |
+| `mobu-plugins` | `list_loaded_plugins`, `inspect_runtime` |
+| `mobu-production-tracking` | `inspect_mapping_context`, `check_connection` |
 
 Prefer typed skills and tools over raw scripts. `save_scene` is destructive and
 requires an explicit absolute `.fbx` path.
@@ -66,12 +76,12 @@ is not a MotionBuilder installation.**
 | Path | Role |
 |---|---|
 | `src/dcc_mcp_mobu/` | Python package — `MobuMcpServer`, dispatcher, plugin, install CLI |
-| `src/dcc_mcp_mobu/skills/` | `mobu-scene`, `mobu-diagnostics` (`SKILL.md` + `tools.yaml` + `scripts/`) |
+| `src/dcc_mcp_mobu/skills/` | Bundled MotionBuilder skills (`SKILL.md` + `tools.yaml` + `scripts/`) |
 | `src/dcc_mcp_mobu/mobu_plugin/startup/` | The Startup hook staged into MotionBuilder |
 | `tests/` | `test_install_cli.py`, `test_package.py` |
 | `tools/` | `lint_skills.py` |
 | `install.md` | Agent-first install / status / verify / uninstall / upgrade guide |
-| `docs/assets/` | Images |
+| `docs/` | API coverage and assets |
 
 ## Release
 

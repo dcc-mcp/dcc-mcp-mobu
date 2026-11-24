@@ -24,4 +24,8 @@ Use these tools to inspect the currently open MotionBuilder scene, list its mode
 Model counts and names include scene components that are `FBModel` instances,
 including cameras and lights; non-model components are excluded.
 
+`inspect_scene` also reports the scene's character count and namespace-qualified
+character names, plus the available take count and names. `list_models` returns
+each model's local name, `LongName`, and MotionBuilder class name.
+
 `save_scene` changes files on disk. Confirm the intended target path before calling it.
