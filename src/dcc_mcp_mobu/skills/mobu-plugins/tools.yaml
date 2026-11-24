@@ -1,0 +1,22 @@
+tools:
+  - name: list_loaded_plugins
+    description: List loaded MotionBuilder plug-in items with groups and SDK metadata.
+    input_schema: {type: object, properties: {}, additionalProperties: false}
+    read_only: true
+    destructive: false
+    idempotent: true
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 45
+    source_file: scripts/list_loaded_plugins.py
+
+  - name: inspect_runtime
+    description: Inspect MotionBuilder plug-in search paths and read-only operation boundaries.
+    input_schema: {type: object, properties: {}, additionalProperties: false}
+    read_only: true
+    destructive: false
+    idempotent: true
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 30
+    source_file: scripts/inspect_runtime.py

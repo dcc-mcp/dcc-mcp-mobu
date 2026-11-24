@@ -9,7 +9,15 @@ def main() -> dict:
     from pyfbsdk import FBModel, FBSystem
 
     models = [
-        {"name": component.Name}
+        {
+            "name": component.Name,
+            "long_name": getattr(component, "LongName", component.Name),
+            "type": (
+                component.ClassName()
+                if callable(getattr(component, "ClassName", None))
+                else type(component).__name__
+            ),
+        }
         for component in FBSystem().Scene.Components
         if isinstance(component, FBModel)
     ]

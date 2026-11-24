@@ -1,0 +1,33 @@
+tools:
+  - name: list_devices
+    description: List visible MotionBuilder devices and read-only online, live, recording, and optical state.
+    input_schema: {type: object, properties: {}, additionalProperties: false}
+    read_only: true
+    destructive: false
+    idempotent: true
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 45
+    source_file: scripts/list_devices.py
+
+  - name: list_actors
+    description: List visible MotionBuilder actors and their associated marker sets.
+    input_schema: {type: object, properties: {}, additionalProperties: false}
+    read_only: true
+    destructive: false
+    idempotent: true
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 45
+    source_file: scripts/list_actors.py
+
+  - name: list_marker_sets
+    description: List scene marker sets and character marker sets with read-only link status.
+    input_schema: {type: object, properties: {}, additionalProperties: false}
+    read_only: true
+    destructive: false
+    idempotent: true
+    execution: sync
+    affinity: main
+    timeout_hint_secs: 45
+    source_file: scripts/list_marker_sets.py
