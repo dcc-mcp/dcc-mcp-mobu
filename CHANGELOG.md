@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.3](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.4.2...v0.4.3) (2026-11-25)
+
+
+### Bug Fixes
+
+* require native preflight core ([1334ad2](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/1334ad21cea8e8c977b25bcbb1f51b3614442b74))
+* require native preflight core ([7b1a812](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/7b1a8122bdec55eaa315c7a2524f6243b6d27a81))
+
+
+### Documentation
+
+* document embedded Python DLL diagnosis ([9f237d1](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/9f237d1c00e692cf2860500801fe0f8a139d60f4))
+* document embedded Python DLL diagnosis ([e272e4b](https://github.com/dcc-mcp/dcc-mcp-mobu/commit/e272e4b7dd670067a0789f15b7bfdd30b643958d))
+
 ## [0.4.2](https://github.com/dcc-mcp/dcc-mcp-mobu/compare/v0.4.1...v0.4.2) (2026-11-24)
 
 
