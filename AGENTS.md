@@ -71,6 +71,25 @@ Follow `install.md`. It installs into MotionBuilder's exact `mobupy`, stages a
 receipted Startup hook, and verifies a typed host ping. **A system-pip install
 is not a MotionBuilder installation.**
 
+## Embedded Python DLL diagnosis
+
+MotionBuilder 2024 uses embedded CPython 3.10. A `dcc_mcp_core` package import
+can succeed while the native `_core` extension still fails to load. Agents must
+run the native preflight in the exact `mobupy` selected by the MotionBuilder
+package before debugging adapter code:
+
+```text
+<mobupy> -c "import dcc_mcp_core; print(dcc_mcp_core.verify_native_core())"
+```
+
+When Core reports `native_load_failed` on Windows Python 3.8 or newer, the
+Lightbox package must set `DCC_MCP_PYTHON3_DLL_DIR` to an absolute directory
+containing a trusted `python3.dll` compatible with the host Python version and
+architecture. Core registers that directory with `os.add_dll_directory()`.
+Changing PATH is insufficient for extension dependencies. Do not rename
+`python310.dll`, copy a DLL from another Python version, or publish local THM
+cache paths and machine-specific details in issue reports or documentation.
+
 ## Repo layout
 
 | Path | Role |
