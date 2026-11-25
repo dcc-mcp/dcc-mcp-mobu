@@ -200,10 +200,30 @@ soft budget; it cannot be forcibly interrupted safely.
 
 For embedded Python DLL loading failures, see Core issues
 [#2884](https://github.com/dcc-mcp/dcc-mcp-core/issues/2884) and
-[#2885](https://github.com/dcc-mcp/dcc-mcp-core/issues/2885). Their explicit
-native preflight is a separate pending Core change, not an API supplied by this
-adapter update. Do not mistake an import-only installation check for a usable
-MotionBuilder session.
+[#2885](https://github.com/dcc-mcp/dcc-mcp-core/issues/2885). An import of
+`dcc_mcp_core` only proves that Python found the package. It does not prove that
+the native `_core` extension can load in the host process.
+
+On Windows Python 3.8 and newer, Core registers absolute DLL directories with
+`os.add_dll_directory()`. When a DCC ships a versioned Python DLL but omits the
+stable-ABI `python3.dll`, set `DCC_MCP_PYTHON3_DLL_DIR` to an absolute directory
+containing a trusted, host-compatible `python3.dll` before starting
+MotionBuilder. The Lightbox MotionBuilder package should provide this variable
+from its resolved embedded-Python runtime. Do not put a user-specific cache
+path, account name, machine name, or internal service URL in this document.
+
+Use the exact MotionBuilder interpreter for the diagnosis:
+
+```text
+<mobupy> -c "import dcc_mcp_core; print(dcc_mcp_core.verify_native_core())"
+```
+
+The result must report `native_core_available` before the adapter is considered
+ready. A result of `native_load_failed` requires checking the reported DLL
+directory candidates and the `_core.pyd` dependency set. PATH changes alone do
+not configure Python 3.8+ extension dependency loading. Never rename
+`python310.dll` to `python3.dll`, copy a DLL from an unrelated Python version,
+or treat a successful package import as a successful host verification.
 
 | Result | Diagnosis | Action |
 | --- | --- | --- |
